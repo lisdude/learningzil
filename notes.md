@@ -1,3 +1,4 @@
+# ZIL (Z-Machine)
 ## macOS
 ### Requirements
 - mono
@@ -65,11 +66,13 @@ clean:
 ```
 - You can also force return values with `<RTRUE>`, `<RFALSE>`, or by returning a variable: `<RETURN .WHATEVER>`
 
-## Semi-Exhaustive Function List
+## Semi-Exhaustive Function and Routine List
 - `<+ NUMBER NUMBER NUMBER etc>` Add
 - `<- >NUMBER NUMBER NUMBER etc` Subtract
 - `<* NUMBER NUMBER NUMBER etc>` Multiply
 - `</ NUMBER NUMBER NUMBER etc>` Divide
+- `<MOD NUMBER1 NUMBER2>` - Divide NUMBER1 by NUMBER2 and return the remainder.
+- `<RANDOM NUMBER>` - Return a random number between 1 and NUMBER.
 - `<LSH WORD AMOUNT>` Shift bits.
 - `<ORB NUMBER1 NUMBER2>` Bitwise OR
 - `<ANDB NUMBER1 NUMBER2>` Bitwise AND
@@ -83,16 +86,21 @@ clean:
 - `<1? NUMBER>` - True if a number is 1.
 - `<==? VALUE1 VALUE2>` - Return true if both values are exactly equal.
 - `<=? VALUE1 VALUE2>` - Return true if both values are structurally equal.
-- `<AGAIN [ACTIVATION]>` - Sends you to the top of a REPEAT loop. The optional ACTIVATION argument will let you specify which repeat to go back to. When used outside of a REPEAT, sends you back to the top of the current routine.
-- `<AND expressions...>` - Return true if all expressions are true.
+- `<AGAIN [ACTIVATION]>` - Sends you to the top of a REPEAT loop. The optional ACTIVATION argument will let you specify which repeat to go back to. When used outside of a REPEAT, sends you back to the top of the current routine. (*Learning ZIL pages 32, 54*)
+- `<AND expressions...>` - Return true if all expressions are true. (*Learning ZIL page 15*)
 - `<VERSION ZIP | EZIP | XZIP | YZIP | number>` - Set the interpreter version. ZIP = 3, EZIP = 4, XZIP = 5, YZIP = 6
 - `<CONSTANT NAME VALUE>` - Declare a constant variable with the value VALUE. Constant variables cannot be changed.
-- `<SETG VARIABLE VALUE>` - Set the value of gloabl variable VARIABLE to VALUE.
+- `<SETG VARIABLE VALUE>` - Set the value of gloabl variable VARIABLE to VALUE. (*Learning ZIL pages 18, 23*)
 - `<INIT-STATUS-LINE [t]>` - Set up the status line at the top of the screen. The optional argument T tells INIT-STATUS-LINE not to clear the screen first. (Typically only called at the very beginning of the game.)
 - `<UPDATE-STATUS-LINE>` - Updates the status line. This gets called every turn.
 - `<CRLF>` - Carriage return / line feed. Starts a new line.
 - `PICK-ONE` - Pick a random element from a table. Each element will only be shown once until all elements have been displayed. LTABLES used with PICK-ONE must have the number 2 as their first element.
 - `PICK-ONE-R` - Pick a random element from a table. Does **NOT** remember which elements have already been displayed, making repeats possible.
+- `<COND (PREDICATE ACTION)>` - Run ACTION if the PREDICATE evaluates to true. (*Learning ZIL pages 10, 17*)
+- `<QUEUE INTERRUPT-ROUTINE TURNS>` - Runs INTERRUPT-ROUTINE after TURNS number of turns. A TURNS value of 1 will run the routine on the same turn and before the next prompt. A TURNS value of 2 will run the following turn, etc. A TURNS value of -1 will run every turn until you dequeue it. Otherwise, the interrupt is automatically dequeued after running. (*Learning ZIL page 20*)
+- `<MOVE OBJECT1 OBJEC2T>` - Change the location of OBJECT1 to OBJECT2. (*Learning ZIL pages 25, 54*)
+- `<PUTP OBJECT PROPERTY VALUE>` - Change the value of PROPERTY on OBJECT to VALUE. (*Learning ZIL page 55*)
+- `<VERB? VERB-NAME>` - Return true if PRSA is VERB-NAME. (*Learning ZIL pages 13, 38*)
 
 ### Questions I Have
 - What's the difference between ==? and =?
@@ -100,6 +108,7 @@ clean:
 ## Routine Naming Conventions
 - Object and room actions are the name of the object or room with "-F" appended.
 - The argument passed to room routines is typically called RARG.
+- Interrupt routines typically being with 'I-'. e.g. `I-SHOOTING-STAR`
 
 ## Matching and Parsing
 - The parser picks a match in the following order: `PRSI` (indirect object), `PRSO` (direct object), `PRSA` (verb)
