@@ -101,6 +101,28 @@ clean:
 - `<MOVE OBJECT1 OBJEC2T>` - Change the location of OBJECT1 to OBJECT2. (*Learning ZIL pages 25, 54*)
 - `<PUTP OBJECT PROPERTY VALUE>` - Change the value of PROPERTY on OBJECT to VALUE. (*Learning ZIL page 55*)
 - `<VERB? VERB-NAME>` - Return true if PRSA is VERB-NAME. (*Learning ZIL pages 13, 38*)
+- `<GOTO ROOM>` - Move the player to ROOM as if they had walked there themselves (calls M-ENTER and friends). NOTE: This **will** send the player to the room, even if something like an exit would normally block it.
+- `<DO-WALK ,P?DIRECTION>` - Force the player to walk in DIRECTION.
+- `<JIGS-UP DEATH-MESSAGE>` - Kill the player and print the death message.
+- `<THIS-IS-IT OBJECT>` - Change the object that is referred to by typing *IT*. Normally this is PRSO but this routine lets you change it to something else.
+- `<ITALICIZE STRING>` - Causes STRING to appear in italics or, if the hardware doesn't support it, underlined.
+- `<GAME-VERB?>` - Returns true if PRSA is a verb that doesn't take a turn. If you create a verb that doesn't require a turn, it should be added to the GAME-VERB? list. (e.g. `<SETG EXTRA-GAME-VERBS '(SCORE HELP INFO CREDITS)>`)
+- `<ROB OBJECT [ROOM || OBJECT]>` - Remove everything from inside of OBJECT. If the optional argument ROOM (or OBJECT) is supplied, the contents get moved there. Otherwise their location is simply cleared.
+- `<WEIGHT OBJECT>` - Determine the total size of OBJECT by recursively cycling through its contents and their contents and adding the SIZE property of those objects to that of OBJECT. (In other words, it returns the total weight of the object and everything inside of it.)
+- `<VISIBLE? OBJECT>` - Returns true if OPBJECT is visible to the player.
+- `<ACCESSIBLE? OBJECT>` - Returns true if an object can be retrieved.
+- `<UNTOUCHABLE? OBJECT>` - Returns true if OBJECT is out of reach of the player.
+- `<META-LOC OBJECT>` - Return the location of OBJECT if it's inside a room. Otherwise, return false.
+- `<OTHER-SIDE DOOR-OBJECT>` - Returns the room on the other side of DOOR-OBJECT.
+- `<NOW-DARK?>` - Call this after doing something that affects a light source (like turning off a lamp). It will check if it's dark and inform the player. *NOT A PREDICATE*
+- `<NOW-LIT?>` - The opposite of NOW-DARK.
+- `<HELD? OBJECT1 [OBJECT2]>` - Return true if OBJECT1 is ultimately inside of OBJECT2. OBJECT2 will default to the player if not given. (Note that OBJECT1 can be inside an object inside an object inside of OBJECT2. It doesn't necessarily mean it's in their inventory directly.)
+- `<TOUCHING? OBJECT>` - Return true if the current PRSA is a touch verb (e.g. TOUCH, TAKE, SHAKE, PUSH, etc). Seems like a shortcut so you don't have to write a long VERB? check for all of the touching verbs. (*Learning Zil page 67*)
+- `<CANT-SEE OBJECT>` - Mimic a parser failure for 'You can't see any OBJECT here.' Uses the player's noun rather than OBJECT's DESC.
+- `<RUNNING? ROUTINE>` - Returns true if ROUTINE will be called at the end of the current turn.
+- `<GLOBAL-IN? OBJECT ROOM>` - Returns true if OBJECT is a local-gloabl in ROOM.
+- `<SEE-INSIDE? OBJECT>` - Returns true if the player can see the contents of the container. (e.g. open and transparent)
+- `<FIND-IN OBJECT FLAG [STRING]>` - Return an object inside of OBJECT that has FLAG set. If an optional STRING is given, it gets printed before the normal response.
 
 ### Questions I Have
 - What's the difference between ==? and =?
