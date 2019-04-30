@@ -22,26 +22,6 @@ Sadly this doesn't seem to... fully... work in Visual Studio Code. It will work 
 - `zapf mygame.zap`
 - `frotz mygame.z3`
 
-## Makefile Template
-```make
-version = .z6
-
-src = $(wildcard *.zil)
-obj = $(src:.zil=.zap)
-final = $(src:.zil=$(version))
-
-%.zap: %.zil
-	zilf $<
-
-$(final): $(obj)
-	zapf $<
-
-.PHONY: clean
-
-clean:
-	rm $(final) ; rm *.zap
-```
-
 ## Syntax Documentation (MDL)
 - `<>` is a FORM that gets evaluated. (e.g. function calls)
     - `<a b c>` => `a(b, c)` in MOO
