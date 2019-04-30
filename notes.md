@@ -1,21 +1,3 @@
-# ZIL (Z-Machine)
-## macOS
-### Requirements
-- mono
-- frotz
-- [Zilf](https://bitbucket.org/jmcgrew/zilf/wiki/Home)
-
-### Fixup
-Since we can't use mono natively, we have to make a bash script to do it for us. So in the bin directory, make two files:
-- zilf
-    - `mono /Users/lisdude/Downloads/zilf-0.8/bin/zilf.exe "$@"`
-- zapf
-    - `mono /Users/lisdude/Downloads/zilf-0.8/bin/zapf.exe "$@"`
-
-It's also potentially worthwhile to put links to those scripts in /usr/local/bin.
-
-Sadly this doesn't seem to... fully... work in Visual Studio Code. It will work for documentation but not for debugging if you point it to the zilf and zapf scripts.
-
 ## Compiling and Running
 - `zilf mygame.zil`
 - Running out of memory in a huge game? Abbreviate: `zapf -ab mygame.zap >mygame_freq.xzap && rm -f mygame_freq.zap`
@@ -33,7 +15,7 @@ Sadly this doesn't seem to... fully... work in Visual Studio Code. It will work 
 - `'THING` - Refers to the symbol THING. A symbol is defined in a line like, say, `<OBJECT THING`.
 - `,STUFF` - You need a comma before: global variables, room names, object names
 - `.STUFF` - Used to refer to a local variable.
-- The AUX keyword is used to declare local variables that aren't passed into the function. For example: `<ROUTINE DO-STUFF ("AUX" STUFF THINGS) <SET STUFF 30> <SET THINGS "Things Everywhere!!!">>` In this example, stuff and things are local variables and **NOT** variables that got passed into DO-STUFF from another routine.
+- The AUX keyword is used to declare local variables that aren't passed into the function. For example: `<ROUTINE DO-STUFF ("AUX" STUFF THINGS) <SET STUFF 30> <SET THINGS "Things Everywhere!!!">>` In this example, stuff and things are local variables and **NOT** variables that got passed into DO-STUFF from another routine. (*Learning Zil page 9*)
 - Routine arguments must be passed in the order: passed arguments, optional arguments, and aux arguments. For example: `<ROUTINE SOMETHING (PASSED "OPT" OPTIONAL "AUX" AUXILIARY) <stuff>>`
 - A *predicate* is basically anything whose value can be true or false. Typically found as the first part of a list in a COND. e.g. `<COND (<predicate here> <now do this>)>`
 - Routines return the last thing that the routine did. To use that value in another routine, you would set its value into a local variable. For example:
@@ -66,8 +48,11 @@ Sadly this doesn't seem to... fully... work in Visual Studio Code. It will work 
 - `<1? NUMBER>` - True if a number is 1.
 - `<==? VALUE1 VALUE2>` - Return true if both values are exactly equal.
 - `<=? VALUE1 VALUE2>` - Return true if both values are structurally equal.
+- `<N==? OBJECT OBJECT>` - Return true if the two objects are not equal.
 - `<AGAIN [ACTIVATION]>` - Sends you to the top of a REPEAT loop. The optional ACTIVATION argument will let you specify which repeat to go back to. When used outside of a REPEAT, sends you back to the top of the current routine. (*Learning ZIL pages 32, 54*)
 - `<AND expressions...>` - Return true if all expressions are true. (*Learning ZIL page 15*)
+- `<OR expressions...>` - Return true if one of the expressions is true. (*Learning ZIL page 16*)
+- `<NOT expressions...>` - Negate the result of the expressions. (*Learning ZIL page 15*)
 - `<VERSION ZIP | EZIP | XZIP | YZIP | number>` - Set the interpreter version. ZIP = 3, EZIP = 4, XZIP = 5, YZIP = 6
 - `<CONSTANT NAME VALUE>` - Declare a constant variable with the value VALUE. Constant variables cannot be changed.
 - `<SETG VARIABLE VALUE>` - Set the value of gloabl variable VARIABLE to VALUE. (*Learning ZIL pages 18, 23*)
@@ -78,9 +63,11 @@ Sadly this doesn't seem to... fully... work in Visual Studio Code. It will work 
 - `PICK-ONE-R` - Pick a random element from a table. Does **NOT** remember which elements have already been displayed, making repeats possible.
 - `<COND (PREDICATE ACTION)>` - Run ACTION if the PREDICATE evaluates to true. (*Learning ZIL pages 10, 17*)
 - `<QUEUE INTERRUPT-ROUTINE TURNS>` - Runs INTERRUPT-ROUTINE after TURNS number of turns. A TURNS value of 1 will run the routine on the same turn and before the next prompt. A TURNS value of 2 will run the following turn, etc. A TURNS value of -1 will run every turn until you dequeue it. Otherwise, the interrupt is automatically dequeued after running. (*Learning ZIL page 20*)
+- `<DEQUEUE INTERRUPT-ROUTINE>` - Dequeue the routine.
 - `<MOVE OBJECT1 OBJEC2T>` - Change the location of OBJECT1 to OBJECT2. (*Learning ZIL pages 25, 54*)
 - `<PUTP OBJECT PROPERTY VALUE>` - Change the value of PROPERTY on OBJECT to VALUE. (*Learning ZIL page 55*)
 - `<VERB? VERB-NAME>` - Return true if PRSA is VERB-NAME. (*Learning ZIL pages 13, 38*)
+- `<PRSO? OBJECT>` - Return true if PRSO is equal to OBJECT.
 - `<GOTO ROOM>` - Move the player to ROOM as if they had walked there themselves (calls M-ENTER and friends). NOTE: This **will** send the player to the room, even if something like an exit would normally block it.
 - `<DO-WALK ,P?DIRECTION>` - Force the player to walk in DIRECTION.
 - `<JIGS-UP DEATH-MESSAGE>` - Kill the player and print the death message.
@@ -103,14 +90,20 @@ Sadly this doesn't seem to... fully... work in Visual Studio Code. It will work 
 - `<GLOBAL-IN? OBJECT ROOM>` - Returns true if OBJECT is a local-gloabl in ROOM.
 - `<SEE-INSIDE? OBJECT>` - Returns true if the player can see the contents of the container. (e.g. open and transparent)
 - `<FIND-IN OBJECT FLAG [STRING]>` - Return an object inside of OBJECT that has FLAG set. If an optional STRING is given, it gets printed before the normal response.
+- `<FIRST? OBJECT>` - Return the first object contained within OBJECT. If OBJECT is empty, return false.
+- `<NEXT? OBJECT>` - Return the next object in the location that OBJECT is in. (e.g. if you have a backpack with an apple, an orange, and a banana... NEXT ,ORANGE would return ,BANANA)
+- `<INSERT-FILE FILE-NAME>` - Include the code from FILE-NAME.
+- `<PERFORM PRSA-VERB [PRSO-OBJECT] [PRSI-OBJECT]>` - Manually handle input (PRSA-VERB), giving the optional objects specified as PRSO and PRSI the chance to handle the verb. (NOTE: Verbs must use their internal name. e.g. ,V?VERB-NAME-HERE)
+- `<GETP OBJECT PROPERTY>` - Get the value of a property. 
 
 ### Questions I Have
 - What's the difference between ==? and =?
+- Difference between GETP and GETPT?
 
 ## Routine Naming Conventions
 - Object and room actions are the name of the object or room with "-F" appended.
 - The argument passed to room routines is typically called RARG.
-- Interrupt routines typically being with 'I-'. e.g. `I-SHOOTING-STAR`
+- Interrupt routines typically begin with 'I-'. e.g. `I-SHOOTING-STAR`
 
 ## Matching and Parsing
 - The parser picks a match in the following order: `PRSI` (indirect object), `PRSO` (direct object), `PRSA` (verb)
@@ -146,6 +139,13 @@ The way to write that macro is to call FORM to build the form:
 
   <DEFMAC PRSI? (X)
     <FORM ==? ',PRSI .X>>
+```
+
+## Snippets
+- Check if an exit exists at the cat's location:
+```lisp
+<COND (<EQUAL? <GETP <META-LOC ,CAT> ,P?SOUTH> <>>
+        <TELL "NO SOUTH EXIT" CR>)>
 ```
 
 ## Resources
