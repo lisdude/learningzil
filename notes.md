@@ -46,8 +46,9 @@
 - `<G=? NUMBER1 NUMBER2>` Tell whether the first argument is greater than or equal to the second.
 - `<0? NUMBER>` - True if a number is 0.
 - `<1? NUMBER>` - True if a number is 1.
-- `<==? VALUE1 VALUE2>` - Return true if both values are exactly equal.
-- `<=? VALUE1 VALUE2>` - Return true if both values are structurally equal.
+- `<EQUAL? VALUE1 VALUE2>` - Return true if both values are the same.
+- `<==? VALUE1 VALUE2>` -  Same as `EQUAL?`
+- `<=? VALUE1 VALUE2>` -  Same as `EQUAL?`
 - `<N==? OBJECT OBJECT>` - Return true if the two objects are not equal.
 - `<AGAIN [ACTIVATION]>` - Sends you to the top of a REPEAT loop. The optional ACTIVATION argument will let you specify which repeat to go back to. When used outside of a REPEAT, sends you back to the top of the current routine. (*Learning ZIL pages 32, 54*)
 - `<AND expressions...>` - Return true if all expressions are true. (*Learning ZIL page 15*)
@@ -94,11 +95,12 @@
 - `<NEXT? OBJECT>` - Return the next object in the location that OBJECT is in. (e.g. if you have a backpack with an apple, an orange, and a banana... NEXT ,ORANGE would return ,BANANA)
 - `<INSERT-FILE FILE-NAME>` - Include the code from FILE-NAME.
 - `<PERFORM PRSA-VERB [PRSO-OBJECT] [PRSI-OBJECT]>` - Manually handle input (PRSA-VERB), giving the optional objects specified as PRSO and PRSI the chance to handle the verb. (NOTE: Verbs must use their internal name. e.g. ,V?VERB-NAME-HERE)
-- `<GETP OBJECT PROPERTY>` - Get the value of a property. 
+- `<GETP OBJECT PROPERTY>` - Get the value of a property.
+- `<GETPT OBJECT PROPERTY>` - Get the address of PROPERTY on OBJECT.
+- `<PTSIZE PROPERTY-POINTER>` - Return the size of the PROPERTY pointer.
+- `<MAP-DIRECTIONS (D PT ROOM) ...>` - Iterate through all of ROOM's direction properties. D gets set to the property name and PT is set to a pointer to the property data (great for sending to, say, PTSIZE)
 
 ### Questions I Have
-- What's the difference between ==? and =?
-- Difference between GETP and GETPT?
 
 ## Routine Naming Conventions
 - Object and room actions are the name of the object or room with "-F" appended.
@@ -128,6 +130,13 @@
 - `M-NOW-LIT` - Light source is now present
 ### Objects
 - `M-WINNER` - The object that is performing the action
+
+## Exit Types
+- `UEXIT` - Unconditional exit. Anybody is welcome!
+- `NEXIT` - Non-exit
+- `FEXIT` - Function exit. The associated function has to allow it!
+- `CEXIT` - Conditional exit. Only welcome if you meet the condition.
+- `DEXIT` - Door exit. Doors, man.
 
 ## Macros
 ```
