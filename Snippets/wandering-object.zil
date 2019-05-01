@@ -13,22 +13,26 @@
 >
 
 ; "When provided a room object, return either a random exit property or FALSE if no useful exits are found."
-; "RM: Room Object. EXT: Randomly picked exit. COUNT: Loop iterations. PT: The size of the property."
-<ROUTINE RANDOM-EXIT (RM "AUX" EXT COUNT PT)
+; "RM: Room Object. EXT: Exit being checked. COUNT: Loop iterations. PT: Pointer to exit property. RND-EXIT: The random chosen exit."
+<ROUTINE RANDOM-EXIT (RM "AUX" EXT COUNT PT RND-EXIT)
 <SET COUNT 0>
-<REPEAT ()
-    <SET EXT <PICK-ONE-R ,EXIT-REFERENCES>>     ; "Pick an exit property from the table."
-    <SET COUNT <+ .COUNT 1>>
-    <COND (<0? <SET PT <GETPT .RM .EXT>>>       ; "If the property value's size is 0, the exit is invalid. Pick another."
-            <AGAIN>)
-          (<==? <PTSIZE .PT> ,UEXIT>            ; "If the property size matches the size of an exit, we're done."
-            <RETURN .EXT>)
-          (<G=? .COUNT 12>                      ; "Too many iterations. (Though in 2019 it's probably fine to go higher.)"
-            <RFALSE>)>>
+<MAP-DIRECTIONS (EXT PT .RM)                    ; "Iterate through all exits in the room."
+    <COND (<ACCEPTABLE-EXIT .PT>
+            <SET COUNT <+ .COUNT 1>>)>>         ; "Increment the number of acceptable exits."
+<SET RND-EXIT <RANDOM .COUNT>>                  ; "Pick a random number out of the number of valid exits."
+<SET COUNT 0>
+<MAP-DIRECTIONS (EXT PT .RM)                    ; "Start over with the second loop to find the random exit."
+    <COND (<ACCEPTABLE-EXIT .PT>
+            <SET COUNT <+ .COUNT 1>>
+            <COND (<==? .COUNT .RND-EXIT>       ; "If the exit is acceptable and equal to our random exit, done."
+                    <RETURN .EXT>)>)>>
 >
 
-<CONSTANT EXIT-REFERENCES <LTABLE
-P?NORTH P?SOUTH P?EAST P?WEST
-P?NE P?SE P?NW P?SW
-P?UP P?DOWN P?IN P?OUT
->>
+; "Determine if an exit is acceptable for wandering.
+   TODO: Include doors and other special exits."
+<ROUTINE ACCEPTABLE-EXIT (PT)
+  <COND (<0? .PT>                       ; "If the property value's size is 0, the exit is invalid. Pick another."
+            <RFALSE>)
+          (<==? <PTSIZE .PT> ,UEXIT>    ; "If the property size matches the size of an exit, we're done."
+            <RTRUE>)>
+>
